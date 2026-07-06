@@ -1,7 +1,8 @@
 cmd_backup() {
     DATE_TIME=$(date +%Y-%m-%d_%H-%M-%S)    
     SNAPSHOT_DIR="$HOME/.snapshot/snapshots/snapshot_$DATE_TIME"
-    SOURCE_DIR=$1
+
+    handle_arguments "$@"
 
     check_for_alias "$SOURCE_DIR"
 
@@ -33,9 +34,26 @@ EOF
 }
 
 handle_arguments() {
-    echo "Passing Arguments"
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --source)
+                SOURCE_DIR="$2"
+                shift 2
+                ;;
+            --show)
+                show_backups $2
+                shift 2
+                exit 0
+                ;;
+            *)
+                source_dir="$1"
+                ;;
+        esac
+    done
 }
 
+
+# check to see if the source directory is an alias and if so, use the source directory from the alias
 check_for_alias() {
     local ALIAS_NAME=$1
     local ALIAS_DIR="$HOME/.snapshot/alias"
@@ -44,5 +62,31 @@ check_for_alias() {
     if [[ -f "$ALIAS_FILE" ]]; then
         echo "Alias found for $ALIAS_NAME. Using alias."
         SOURCE_DIR=$(jq -r '.source' "$ALIAS_FILE")
+    else 
+        SOURCE_DIR=$ALIAS_NAME
+    fi
+
+
+}
+
+
+show_backups() {
+    local SNAPSHOT_DIR="$HOME/.snapshot/snapshots"
+    local BACKUP_NAME=$1
+
+    check_for_alias "$BACKUP_NAME"
+    found=0
+
+    for meta in $(find "$SNAPSHOT_DIR" -name "metadata.json"); do
+        local source=$(jq -r '.source' "$meta")
+        local id=$(jq -r '.id' "$meta")
+        if [[ "$source" == "$SOURCE_DIR" ]]; then
+            found=1
+            echo "Backup ID: $id, Source: $source"
+        fi
+    done
+
+    if [[ $found -eq 0 ]]; then
+        echo "No backups found for alias or directory $SOURCE_DIR"
     fi
 }
