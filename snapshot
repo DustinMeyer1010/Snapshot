@@ -13,6 +13,7 @@ for file in "$SCRIPT_DIR"/commands/*.sh; do
     source "$file"
 done
 
+
 # Command passed from snapshot
 case "$COMMAND" in 
     backup)
@@ -23,6 +24,20 @@ case "$COMMAND" in
         ;;
     init)
         cmd_init "$@"
+        ;;
+    install)
+        source "$SCRIPT_DIR/install.sh"
+        cmd_install "$@"
+        ;;
+    reinstall)
+        source "$SCRIPT_DIR/install.sh"
+        cmd_install "reinstall"
+        ;;
+    alias)
+        cmd_alias "$@"
+        ;;
+    clear)
+        cmd_clear "$@"
         ;;
     help|*)
         cmd_help "$@"
