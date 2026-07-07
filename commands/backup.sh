@@ -36,14 +36,13 @@ EOF
 handle_arguments() {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            --source)
+            --source|-s)
                 SOURCE_DIR="$2"
                 shift 2
                 ;;
-            --show)
+            --list|-l)
                 show_backups $2
                 shift 2
-                exit 0
                 ;;
             *)
                 source_dir="$1"
