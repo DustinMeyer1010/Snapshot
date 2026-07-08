@@ -41,11 +41,11 @@ handle_arguments() {
                 shift 2
                 ;;
             --list|-l)
-                show_backups $2
+                list_backups $2
                 shift 2
                 ;;
             *)
-                source_dir="$1"
+                SOURCE_DIR="$1"
                 ;;
         esac
     done
@@ -54,7 +54,7 @@ handle_arguments() {
 
 
 
-show_backups() {
+list_backups() {
     local SNAPSHOT_DIR="$HOME/.snapshot/snapshots"
     local BACKUP_NAME=$1
 
