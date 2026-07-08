@@ -40,6 +40,6 @@ check_for_alias() {
         echo "Alias found for $ALIAS_NAME. Using alias."
         SOURCE_DIR=$(jq -r '.source' "$ALIAS_FILE")
     else 
-        SOURCE_DIR=$ALIAS_NAME
+        SOURCE_DIR=$(cd "$1" && pwd)
     fi
 }
